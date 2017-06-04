@@ -178,7 +178,10 @@ st_data = [st_q,st_c,st_m,st_F,st_D,st_h,st_h1,st_h2,st_H,st_p1,st_p2,st_V2]
 
 hy_t_o,hy_h_o = np.mgrid[6*3600:8*3600:360,1.0:5.0:0.1]
 data_hy = sess.run(hy_data,{qmax:0.0289,hy_t:hy_t_o,hy_h:hy_h_o})
-for i in data_hy:
-    plt.su
+for j in data_hy:
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    ax.plot_wireframe(hy_t_o,hy_h_o,j)
+    plt.show()
         
         
