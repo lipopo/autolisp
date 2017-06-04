@@ -85,22 +85,44 @@ with tf.name_scope("ContactOxidationTank"):
 #竖流式沉淀池
 with tf.name_scope("VerticalFlowSedimentationTank"):
     #中心管流速
-    vf_v = tf.placeholder(tf.float32,name="CenterTubeFlowRate")
+    vf_v_1 = tf.placeholder(tf.float32,name="CenterTubeFlowRate")
     #喇叭口管径
     vf_d_1 = tf.placeholder(tf.float32,name="BellMouthDiameter")
     #喇叭口流速
-    vf_v_1 = tf.placeholder(tf.float32,name="BellMouthFlowRate")
+    vf_v_2 = tf.placeholder(tf.float32,name="BellMouthFlowRate")
     #表面负荷
     vf_q_1 = tf.placeholder(tf.float32,name="SurfaceLoad")
+    #水力停留时间
+    vf_t = tf.placeholder(tf.float32,name="HydraulicRetentionTime")
+    #池体下部半径
+    vf_r = tf.placeholder(tf.float32,name="TheLowerRadius")
+    #池体下端倾角
+    vf_alpha = tf.placeholder(tf.float32,name="VertebralAngle")
     #计算中心管面积
     with tf.name_scope("CalculateTheAreaOfTheCentralTube"):
         #中心管断面面积
-        vf_f = qmax / vf_v
+        vf_f = qmax / vf_v_1
         #中心管管径
         vf_d = tf.sqrt(4 * vf_f / np.pi)
         #喇叭口至反射板得距离
-        vf_h_1 = qmax / (vf_v_1 * np.pi * vf_d_1)
+        vf_h_1 = qmax / (vf_v_2 * np.pi * vf_d_1)
     #计算表面积
     with tf.name_scope("CalculateTheSurfaceArea"):
         #水体流速
+        vf_v = vf_q_1 
+        #池体断面面积
+        vf_F = qmax / (kz * vf_v)
+        #池体直径
+        vf_D = tf.sqrt((vf_f + vf_F) * 4/np.pi)   
+    #计算有效水深
+    with tf.name_scope("CalculateEffectiveWaterDepth"):
+        #池体有效高度
+        vf_h = vf_v * vf_t 
+        #池体锥形部分高度
+        vf_h_xd = ((vf_D / 2) - vf_r)*tf.tan(vf_alpha)
+    #计算出水负荷
+    with tf.name_scope("CalculateTheWaterLoad"):
+        #出水负荷
+        tf_q_1 = qmax / (np.pi * vf_D)
         
+    
