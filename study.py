@@ -125,4 +125,46 @@ with tf.name_scope("VerticalFlowSedimentationTank"):
         #出水负荷
         tf_q_1 = qmax / (np.pi * vf_D)
         
+#污泥浓缩池
+with tf.name_scope("SludgeThickeningTank"):
+    #污泥总产量
+    st_q = tf.placeholder(tf.float32,name="TotalSludgeProduction")
+    #污泥固体浓度
+    st_c = tf.placeholder(tf.float32,name="SludgeSolidConcentration")
+    #污泥固体负荷
+    st_m = tf.placeholder(tf.float32,name="SludgeSolidLoad)
+    #超高
+    st_h1 = tf.placeholder(tf.float32,name="HighProtection")
+    #缓冲层高度
+    st_h2 = tf.placeholder(tf.float32,name="BufferLayerHeight")
+    #浓缩前污泥含水率
+    st_p1 = tf.placeholder(tf.float32,name="ConcentrationOfSludgeBeforeConcentration")
+    #浓缩后污泥含水率
+     st_p2 = tf.placeholder(tf.float32,name="ConcentratedSludgeMoistureContent")   
     
+    #污泥池的总面积
+    with tf.name_scope("TheTotalAreaOfTheSludgePool"):
+        #污泥池平面面积
+        st_F = st_q * st_c / st_m
+    #浓缩池直径
+    with tf.name_scope("ConcentratePoolDiameter"):
+        #浓缩池直径
+        st_D = tf.sqrt(st_F * 4 / np.pi)
+    #浓缩池工作部分的高度
+    with tf.name_scope("ConcentrateTheHeightOfTheWorkingPartOfThePool"):
+        #有效高度
+        st_h = 7 * st_q / (24 * st_F)
+    #浓缩池总高度 
+    with tf.name_scope("ConcentrationPoolHeight"):
+        #浓缩池总高度 
+        st_H = st_h + st_h1 + st_h2
+    #浓缩后污泥体积
+    with tf.name_scope("ConcentratedSludgeVolume"):
+        #泥浓缩后污泥的体积
+        st_V2 = st_q * (1 - st_p1)/ (1 - st_p2)
+        
+        
+        
+        
+        
+        
