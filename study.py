@@ -187,11 +187,27 @@ for j in data_hy:
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
     ax.plot_surface(hy_t_o,hy_h_o,j,cmap=cm.coolwarm)
-    cset = ax.contour(hy_t_o, hy_h_o, j, zdir='z', offset=-100, cmap=cm.coolwarm)
-    cset = ax.contour(hy_t_o, hy_h_o, j, zdir='x', offset=-40, cmap=cm.coolwarm)
-    cset = ax.contour(hy_t_o, hy_h_o, j, zdir='y', offset=40, cmap=cm.coolwarm)
     ax.set_xlabel('停留时间')
     ax.set_ylabel('有效高度')
     ax.set_zlabel(hy_dcn[np.where(data_hy==j)[0][0]])
     plt.savefig("C:/Users/Administrator/Desktop/Images/hy_"+hy_dcn[np.where(data_hy==j)[0][0]]+".png",dpi=500)
 
+co_h_o,co_qqs_o  = np.mgrid[2.5:3.5:0.1,3:7:0.5]
+data_co = sess.run(co_data,{qmax:0.0289,bod_in:400.0,
+                            bod_out:20.0,co_M:3000.0,
+                            co_h:co_h_o,co_num:2,
+                            co_f_num:8,co_m:3,
+                            co_h1:0.6,co_h2:0.5,
+                            co_h3:0.3,co_h4:1.5,
+                            co_qqs:co_qqs_o})
+z = 0
+for j in data_co:   
+    if j.shape == co_h_o.shape:
+        fig = plt.figure()
+        ax = fig.add_subplot(111, projection='3d')
+        ax.plot_surface(co_h_o,co_qqs_o,j,cmap=cm.coolwarm)
+        ax.set_xlabel('有效高度')
+        ax.set_ylabel('气水比')
+        ax.set_zlabel(co_dcn[z])
+        plt.savefig("C:/Users/Administrator/Desktop/Images/co_"+co_dcn[z]+".png",dpi=500)
+    z = z + 1
