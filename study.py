@@ -8,7 +8,10 @@ Created on Sun Jun  4 17:51:16 2017
 import numpy as np 
 import tensorflow as tf
 import matplotlib.pyplot as plt
+from matplotlib import cm   
 from mpl_toolkits.mplot3d import Axes3D
+
+plt.rcParams['font.sans-serif'] = ['SimHei']
 
 sess = tf.Session()
 
@@ -35,7 +38,7 @@ with tf.name_scope("HydrolysisAcidificationTank"):
         hy_v = hy_h / hy_t
 
 hy_data = [hy_t,hy_h,hy_V,hy_D,hy_v]
-
+hy_dcn = ["水力停留时间","有效高度","容积","池体直径","上升流速"]
 #接触氧化池
 with tf.name_scope("ContactOxidationTank"):
     #填料容积负荷
@@ -87,10 +90,12 @@ with tf.name_scope("ContactOxidationTank"):
         co_f_qs = co_qs / co_num
         #单格空气量
         co_f_m_qs = co_qs / co_f_num
-co_data = [co_M,co_V,co_h,co_F,co_num,co_f,co_f_num,co_f1,
-           co_t_caclu,co_h1,co_h2,co_h3,co_m,co_h4,co_H,co_t_real,
+co_data = [ co_M, co_V, co_h, co_F, co_num, co_f, co_f_num, co_f1,
+            co_t_caclu, co_h1, co_h2, co_h3, co_m, co_h4, co_H, co_t_real,
            co_V_pack,co_qqs,co_qs,co_f_qs,co_f_m_qs]
-
+co_dcn = ["填料容积负荷","计算池容","池体有效高度","总平面面积","池个数","单座池体面积","格子个数","单格池体平面面积",
+          "计算停留时间","超高","水面至填料层", "填料间距", "填料层数", "池底至填料层","池总高","实际停留时间",
+          "填料容积","气水比","空气量","单池空气量","单格空气量"]
 #竖流式沉淀池
 with tf.name_scope("VerticalFlowSedimentationTank"):
     #中心管流速
@@ -181,7 +186,12 @@ data_hy = sess.run(hy_data,{qmax:0.0289,hy_t:hy_t_o,hy_h:hy_h_o})
 for j in data_hy:
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
-    ax.plot_wireframe(hy_t_o,hy_h_o,j)
-    plt.show()
-        
-        
+    ax.plot_surface(hy_t_o,hy_h_o,j,cmap=cm.coolwarm)
+    cset = ax.contour(hy_t_o, hy_h_o, j, zdir='z', offset=-100, cmap=cm.coolwarm)
+    cset = ax.contour(hy_t_o, hy_h_o, j, zdir='x', offset=-40, cmap=cm.coolwarm)
+    cset = ax.contour(hy_t_o, hy_h_o, j, zdir='y', offset=40, cmap=cm.coolwarm)
+    ax.set_xlabel('停留时间')
+    ax.set_ylabel('有效高度')
+    ax.set_zlabel(hy_dcn[np.where(data_hy==j)[0][0]])
+    plt.savefig("C:/Users/Administrator/Desktop/Images/hy_"+hy_dcn[np.where(data_hy==j)[0][0]]+".png",dpi=500)
+
