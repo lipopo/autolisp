@@ -7,6 +7,10 @@ Created on Sun Jun  4 17:51:16 2017
 
 import numpy as np 
 import tensorflow as tf
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+
+sess = tf.Session()
 
 with tf.name_scope("init_data"):
     qmax = tf.placeholder(tf.float32,name="Qmax")
@@ -16,7 +20,7 @@ with tf.name_scope("init_data"):
     
 #水解酸化池
 with tf.name_scope("HydrolysisAcidificationTank"):
-    #水力停留时间
+    #水力停留时间 6~8h
     hy_t = tf.placeholder(tf.float32,name="HydraulicRetentionTime")
     #有效水深
     hy_h = tf.placeholder(tf.float32,name="EffectiveWaterDepth")
@@ -29,7 +33,9 @@ with tf.name_scope("HydrolysisAcidificationTank"):
     with tf.name_scope("IncreaseTheFlowRateCheck"):
         #上升流速
         hy_v = hy_h / hy_t
-    
+
+hy_data = [hy_t,hy_h,hy_V,hy_D,hy_v]
+
 #接触氧化池
 with tf.name_scope("ContactOxidationTank"):
     #填料容积负荷
@@ -81,7 +87,10 @@ with tf.name_scope("ContactOxidationTank"):
         co_f_qs = co_qs / co_num
         #单格空气量
         co_f_m_qs = co_qs / co_f_num
-        
+co_data = [co_M,co_V,co_h,co_F,co_num,co_f,co_f_num,co_f1,
+           co_t_caclu,co_h1,co_h2,co_h3,co_m,co_h4,co_H,co_t_real,
+           co_V_pack,co_qqs,co_qs,co_f_qs,co_f_m_qs]
+
 #竖流式沉淀池
 with tf.name_scope("VerticalFlowSedimentationTank"):
     #中心管流速
@@ -123,8 +132,11 @@ with tf.name_scope("VerticalFlowSedimentationTank"):
     #计算出水负荷
     with tf.name_scope("CalculateTheWaterLoad"):
         #出水负荷
-        tf_q_1 = qmax / (np.pi * vf_D)
-        
+        vf_q1 = qmax / (np.pi * vf_D)
+vf_data = [vf_v_1,vf_f,vf_d,vf_d_1,vf_v_1,vf_h_1,
+           vf_q_1,vf_v,vf_F,vf_D,vf_t,vf_h,vf_r,
+           vf_h_xd,vf_q1]
+    
 #污泥浓缩池
 with tf.name_scope("SludgeThickeningTank"):
     #污泥总产量
@@ -132,7 +144,7 @@ with tf.name_scope("SludgeThickeningTank"):
     #污泥固体浓度
     st_c = tf.placeholder(tf.float32,name="SludgeSolidConcentration")
     #污泥固体负荷
-    st_m = tf.placeholder(tf.float32,name="SludgeSolidLoad)
+    st_m = tf.placeholder(tf.float32,name="SludgeSolidLoad")
     #超高
     st_h1 = tf.placeholder(tf.float32,name="HighProtection")
     #缓冲层高度
@@ -140,7 +152,7 @@ with tf.name_scope("SludgeThickeningTank"):
     #浓缩前污泥含水率
     st_p1 = tf.placeholder(tf.float32,name="ConcentrationOfSludgeBeforeConcentration")
     #浓缩后污泥含水率
-     st_p2 = tf.placeholder(tf.float32,name="ConcentratedSludgeMoistureContent")   
+    st_p2 = tf.placeholder(tf.float32,name="ConcentratedSludgeMoistureContent")   
     
     #污泥池的总面积
     with tf.name_scope("TheTotalAreaOfTheSludgePool"):
@@ -162,9 +174,11 @@ with tf.name_scope("SludgeThickeningTank"):
     with tf.name_scope("ConcentratedSludgeVolume"):
         #泥浓缩后污泥的体积
         st_V2 = st_q * (1 - st_p1)/ (1 - st_p2)
-        
-        
-        
-        
+st_data = [st_q,st_c,st_m,st_F,st_D,st_h,st_h1,st_h2,st_H,st_p1,st_p2,st_V2]
+
+hy_t_o,hy_h_o = np.mgrid[6*3600:8*3600:360,1.0:5.0:0.1]
+data_hy = sess.run(hy_data,{qmax:0.0289,hy_t:hy_t_o,hy_h:hy_h_o})
+for i in data_hy:
+    plt.su
         
         
