@@ -50,6 +50,8 @@ with tf.name_scope("ContactOxidationTank"):
     co_h3 = tf.placeholder(tf.float32,name="PackingSpacing")
     #池底至填料层
     co_h4 = tf.placeholder(tf.float32,name="BottomToPackingLayer")
+    #气水比
+    co_qqs = tf.placeholder(tf.float32,name="GasToWaterRatio")
     with tf.name_scope("CalculateTheVolume"):
         #计算池容
         co_V = qmax*(bod_in - bod_out) / co_M
@@ -74,4 +76,31 @@ with tf.name_scope("ContactOxidationTank"):
         co_V_pack = co_h * co_F
     with tf.name_scope("CalculateTheAmountOfAir"):
         #计算空气量
-        co_qs = co_
+        co_qs = co_qqs * qmax
+        #单池空气量
+        co_f_qs = co_qs / co_num
+        #单格空气量
+        co_f_m_qs = co_qs / co_f_num
+        
+#竖流式沉淀池
+with tf.name_scope("VerticalFlowSedimentationTank"):
+    #中心管流速
+    vf_v = tf.placeholder(tf.float32,name="CenterTubeFlowRate")
+    #喇叭口管径
+    vf_d_1 = tf.placeholder(tf.float32,name="BellMouthDiameter")
+    #喇叭口流速
+    vf_v_1 = tf.placeholder(tf.float32,name="BellMouthFlowRate")
+    #表面负荷
+    vf_q_1 = tf.placeholder(tf.float32,name="SurfaceLoad")
+    #计算中心管面积
+    with tf.name_scope("CalculateTheAreaOfTheCentralTube"):
+        #中心管断面面积
+        vf_f = qmax / vf_v
+        #中心管管径
+        vf_d = tf.sqrt(4 * vf_f / np.pi)
+        #喇叭口至反射板得距离
+        vf_h_1 = qmax / (vf_v_1 * np.pi * vf_d_1)
+    #计算表面积
+    with tf.name_scope("CalculateTheSurfaceArea"):
+        #水体流速
+        
